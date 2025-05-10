@@ -200,19 +200,17 @@
       <div id="results" class="hidden">
         <h2>Analysis Results</h2>
         <div id="resultContent"></div>
+        <div id="graphContainer" class="hidden">
+          <h2>Visualization</h2>
+          <canvas id="resultsChart"></canvas>
+        </div>
         <button id="newTestBtn">Perform New Analysis</button>
-      </div>
-
-      <div id="graphContainer" class="hidden">
-        <h2>Visualization</h2>
-        <canvas id="resultsChart"></canvas>
       </div>
     </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // DOM Elements
-        let resultsChart = null;
         const testTypeSelect = document.getElementById("testType");
         const inputForm = document.getElementById("inputForm");
         const zTestForm = document.getElementById("zTestForm");
@@ -225,6 +223,7 @@
         const tailType = document.getElementById("tailType");
         const significanceLevel = document.getElementById("significanceLevel");
         const confidenceLevel = document.getElementById("confidenceLevel");
+        let resultsChart = null;
 
         // Constants
         const TEST_TYPES = {
@@ -297,170 +296,170 @@
           switch (testType) {
             case TEST_TYPES.ONE_SAMPLE:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="sampleMean">Sample Mean (x̄)</label>
-                        <input type="number" id="sampleMean" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="popMean">Population Mean (μ)</label>
-                        <input type="number" id="popMean" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="popStdDev">Population Standard Deviation (σ)</label>
-                        <input type="number" id="popStdDev" min="0.0001" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sampleSize">Sample Size (n)</label>
-                        <input type="number" id="sampleSize" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="sampleMean">Sample Mean (x̄)</label>
+                                <input type="number" id="sampleMean" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="popMean">Population Mean (μ)</label>
+                                <input type="number" id="popMean" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="popStdDev">Population Standard Deviation (σ)</label>
+                                <input type="number" id="popStdDev" min="0.0001" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sampleSize">Sample Size (n)</label>
+                                <input type="number" id="sampleSize" min="2" required>
+                            </div>
+                        `;
               break;
 
             case TEST_TYPES.TWO_SAMPLE:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="sampleMean1">Sample 1 Mean (x̄₁)</label>
-                        <input type="number" id="sampleMean1" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sampleMean2">Sample 2 Mean (x̄₂)</label>
-                        <input type="number" id="sampleMean2" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="popStdDev1">Population 1 Standard Deviation (σ₁)</label>
-                        <input type="number" id="popStdDev1" min="0.0001" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="popStdDev2">Population 2 Standard Deviation (σ₂)</label>
-                        <input type="number" id="popStdDev2" min="0.0001" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sampleSize1">Sample 1 Size (n₁)</label>
-                        <input type="number" id="sampleSize1" min="2" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sampleSize2">Sample 2 Size (n₂)</label>
-                        <input type="number" id="sampleSize2" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="sampleMean1">Sample 1 Mean (x̄₁)</label>
+                                <input type="number" id="sampleMean1" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sampleMean2">Sample 2 Mean (x̄₂)</label>
+                                <input type="number" id="sampleMean2" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="popStdDev1">Population 1 Standard Deviation (σ₁)</label>
+                                <input type="number" id="popStdDev1" min="0.0001" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="popStdDev2">Population 2 Standard Deviation (σ₂)</label>
+                                <input type="number" id="popStdDev2" min="0.0001" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sampleSize1">Sample 1 Size (n₁)</label>
+                                <input type="number" id="sampleSize1" min="2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sampleSize2">Sample 2 Size (n₂)</label>
+                                <input type="number" id="sampleSize2" min="2" required>
+                            </div>
+                        `;
               break;
 
             case TEST_TYPES.PROPORTION_ONE:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="sampleProp">Sample Proportion (p̂)</label>
-                        <input type="number" id="sampleProp" min="0" max="1" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="popProp">Population Proportion (p₀)</label>
-                        <input type="number" id="popProp" min="0" max="1" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="propSampleSize">Sample Size (n)</label>
-                        <input type="number" id="propSampleSize" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="sampleProp">Sample Proportion (p̂)</label>
+                                <input type="number" id="sampleProp" min="0" max="1" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="popProp">Population Proportion (p₀)</label>
+                                <input type="number" id="popProp" min="0" max="1" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="propSampleSize">Sample Size (n)</label>
+                                <input type="number" id="propSampleSize" min="2" required>
+                            </div>
+                        `;
               break;
 
             case TEST_TYPES.PROPORTION_TWO:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="sampleProp1">Sample 1 Proportion (p̂₁)</label>
-                        <input type="number" id="sampleProp1" min="0" max="1" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="sampleProp2">Sample 2 Proportion (p̂₂)</label>
-                        <input type="number" id="sampleProp2" min="0" max="1" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="propSampleSize1">Sample 1 Size (n₁)</label>
-                        <input type="number" id="propSampleSize1" min="2" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="propSampleSize2">Sample 2 Size (n₂)</label>
-                        <input type="number" id="propSampleSize2" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="sampleProp1">Sample 1 Proportion (p̂₁)</label>
+                                <input type="number" id="sampleProp1" min="0" max="1" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sampleProp2">Sample 2 Proportion (p̂₂)</label>
+                                <input type="number" id="sampleProp2" min="0" max="1" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="propSampleSize1">Sample 1 Size (n₁)</label>
+                                <input type="number" id="propSampleSize1" min="2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="propSampleSize2">Sample 2 Size (n₂)</label>
+                                <input type="number" id="propSampleSize2" min="2" required>
+                            </div>
+                        `;
               break;
 
             case TEST_TYPES.CI_SINGLE_MEAN:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="ciSampleMean">Sample Mean (x̄)</label>
-                        <input type="number" id="ciSampleMean" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciPopStdDev">Population Standard Deviation (σ)</label>
-                        <input type="number" id="ciPopStdDev" min="0.0001" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciSampleSize">Sample Size (n)</label>
-                        <input type="number" id="ciSampleSize" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="ciSampleMean">Sample Mean (x̄)</label>
+                                <input type="number" id="ciSampleMean" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciPopStdDev">Population Standard Deviation (σ)</label>
+                                <input type="number" id="ciPopStdDev" min="0.0001" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciSampleSize">Sample Size (n)</label>
+                                <input type="number" id="ciSampleSize" min="2" required>
+                            </div>
+                        `;
               break;
 
             case TEST_TYPES.CI_TWO_MEANS:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="ciSampleMean1">Sample 1 Mean (x̄₁)</label>
-                        <input type="number" id="ciSampleMean1" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciSampleMean2">Sample 2 Mean (x̄₂)</label>
-                        <input type="number" id="ciSampleMean2" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciPopStdDev1">Population 1 Standard Deviation (σ₁)</label>
-                        <input type="number" id="ciPopStdDev1" min="0.0001" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciPopStdDev2">Population 2 Standard Deviation (σ₂)</label>
-                        <input type="number" id="ciPopStdDev2" min="0.0001" step="any" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciSampleSize1">Sample 1 Size (n₁)</label>
-                        <input type="number" id="ciSampleSize1" min="2" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciSampleSize2">Sample 2 Size (n₂)</label>
-                        <input type="number" id="ciSampleSize2" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="ciSampleMean1">Sample 1 Mean (x̄₁)</label>
+                                <input type="number" id="ciSampleMean1" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciSampleMean2">Sample 2 Mean (x̄₂)</label>
+                                <input type="number" id="ciSampleMean2" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciPopStdDev1">Population 1 Standard Deviation (σ₁)</label>
+                                <input type="number" id="ciPopStdDev1" min="0.0001" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciPopStdDev2">Population 2 Standard Deviation (σ₂)</label>
+                                <input type="number" id="ciPopStdDev2" min="0.0001" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciSampleSize1">Sample 1 Size (n₁)</label>
+                                <input type="number" id="ciSampleSize1" min="2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciSampleSize2">Sample 2 Size (n₂)</label>
+                                <input type="number" id="ciSampleSize2" min="2" required>
+                            </div>
+                        `;
               break;
 
             case TEST_TYPES.CI_SINGLE_PROPORTION:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="ciSampleProp">Sample Proportion (p̂)</label>
-                        <input type="number" id="ciSampleProp" min="0" max="1" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciPropSampleSize">Sample Size (n)</label>
-                        <input type="number" id="ciPropSampleSize" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="ciSampleProp">Sample Proportion (p̂)</label>
+                                <input type="number" id="ciSampleProp" min="0" max="1" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciPropSampleSize">Sample Size (n)</label>
+                                <input type="number" id="ciPropSampleSize" min="2" required>
+                            </div>
+                        `;
               break;
 
             case TEST_TYPES.CI_TWO_PROPORTIONS:
               zTestForm.innerHTML = `
-                    <div class="form-group">
-                        <label for="ciSampleProp1">Sample 1 Proportion (p̂₁)</label>
-                        <input type="number" id="ciSampleProp1" min="0" max="1" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciSampleProp2">Sample 2 Proportion (p̂₂)</label>
-                        <input type="number" id="ciSampleProp2" min="0" max="1" step="0.0001" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciPropSampleSize1">Sample 1 Size (n₁)</label>
-                        <input type="number" id="ciPropSampleSize1" min="2" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ciPropSampleSize2">Sample 2 Size (n₂)</label>
-                        <input type="number" id="ciPropSampleSize2" min="2" required>
-                    </div>
-                `;
+                            <div class="form-group">
+                                <label for="ciSampleProp1">Sample 1 Proportion (p̂₁)</label>
+                                <input type="number" id="ciSampleProp1" min="0" max="1" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciSampleProp2">Sample 2 Proportion (p̂₂)</label>
+                                <input type="number" id="ciSampleProp2" min="0" max="1" step="0.0001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciPropSampleSize1">Sample 1 Size (n₁)</label>
+                                <input type="number" id="ciPropSampleSize1" min="2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciPropSampleSize2">Sample 2 Size (n₂)</label>
+                                <input type="number" id="ciPropSampleSize2" min="2" required>
+                            </div>
+                        `;
               break;
           }
         }
@@ -1102,6 +1101,7 @@
           }
         }
 
+        // Create chart visualization
         function createChart(testType, zScore, criticalValue, tail, alpha) {
           const ctx = document.getElementById("resultsChart").getContext("2d");
           const graphContainer = document.getElementById("graphContainer");
@@ -1117,31 +1117,76 @@
             ? -criticalValue
             : tail === TAIL_TYPES.LEFT_TAILED
             ? criticalValue
-            : null;
+            : -Infinity;
           const rightCritical = isTwoTailed
             ? criticalValue
             : tail === TAIL_TYPES.RIGHT_TAILED
             ? criticalValue
-            : null;
+            : Infinity;
+
+          // Create data points for the normal curve
+          const labels = [];
+          const normalData = [];
+          const criticalData = [];
+          const acceptedData = [];
+
+          for (let i = -30; i <= 30; i++) {
+            const z = i / 5;
+            labels.push(z.toFixed(1));
+            const y = Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
+            normalData.push(y);
+
+            if (z <= leftCritical || z >= rightCritical) {
+              criticalData.push(y);
+              acceptedData.push(null);
+            } else {
+              criticalData.push(null);
+              acceptedData.push(y);
+            }
+          }
 
           // Determine chart type based on test
-          let chartType, title;
+          let title;
           if (testType.startsWith("ci")) {
-            chartType = "ci";
             title = "Confidence Interval Visualization";
           } else {
-            chartType = "test";
             title = "Hypothesis Test Visualization";
           }
 
-          // Common chart configuration
-          const config = {
+          // Create the chart
+          resultsChart = new Chart(ctx, {
             type: "line",
             data: {
-              labels: Array.from({ length: 61 }, (_, i) =>
-                ((i - 30) / 5).toFixed(1)
-              ),
-              datasets: [],
+              labels: labels,
+              datasets: [
+                {
+                  label: "Standard Normal Distribution",
+                  data: normalData,
+                  borderColor: "rgb(75, 192, 192)",
+                  backgroundColor: "rgba(75, 192, 192, 0.1)",
+                  borderWidth: 2,
+                  fill: false,
+                  pointRadius: 0,
+                },
+                {
+                  label: "Critical Region",
+                  data: criticalData,
+                  borderColor: "rgb(255, 99, 132)",
+                  backgroundColor: "rgba(255, 99, 132, 0.5)",
+                  borderWidth: 1,
+                  fill: "+1",
+                  pointRadius: 0,
+                },
+                {
+                  label: "Accepted Region",
+                  data: acceptedData,
+                  borderColor: "rgb(54, 162, 235)",
+                  backgroundColor: "rgba(54, 162, 235, 0.3)",
+                  borderWidth: 1,
+                  fill: false,
+                  pointRadius: 0,
+                },
+              ],
             },
             options: {
               responsive: true,
@@ -1177,94 +1222,27 @@
                 },
               },
             },
-          };
-
-          // Add normal distribution curve
-          config.data.datasets.push({
-            label: "Standard Normal Distribution",
-            data: Array.from({ length: 61 }, (_, i) => {
-              const z = (i - 30) / 5;
-              return Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
-            }),
-            borderColor: "rgb(75, 192, 192)",
-            backgroundColor: "rgba(75, 192, 192, 0.1)",
-            borderWidth: 2,
-            fill: true,
-            pointRadius: 0,
           });
 
-          // Add critical regions
-          if (chartType === "test") {
-            if (leftCritical !== null) {
-              config.data.datasets.push({
-                label: "Critical Region",
-                data: Array.from({ length: 61 }, (_, i) => {
-                  const z = (i - 30) / 5;
-                  return z <= leftCritical
-                    ? Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI)
-                    : null;
-                }),
-                borderColor: "rgb(255, 99, 132)",
-                backgroundColor: "rgba(255, 99, 132, 0.5)",
-                borderWidth: 1,
-                fill: true,
-                pointRadius: 0,
-              });
-            }
-
-            if (rightCritical !== null) {
-              config.data.datasets.push({
-                label: "Critical Region",
-                data: Array.from({ length: 61 }, (_, i) => {
-                  const z = (i - 30) / 5;
-                  return z >= rightCritical
-                    ? Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI)
-                    : null;
-                }),
-                borderColor: "rgb(255, 99, 132)",
-                backgroundColor: "rgba(255, 99, 132, 0.5)",
-                borderWidth: 1,
-                fill: true,
-                pointRadius: 0,
-              });
-            }
-
-            // Add Z-score marker
-            config.data.datasets.push({
+          // Add Z-score marker for hypothesis tests
+          if (!testType.startsWith("ci")) {
+            resultsChart.data.datasets.push({
               label: "Calculated Z-Score",
-              data: Array.from({ length: 61 }, (_, i) => {
-                const z = (i - 30) / 5;
-                return Math.abs(z - zScore) < 0.1
-                  ? Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI)
+              data: labels.map((z) => {
+                const numZ = parseFloat(z);
+                return Math.abs(numZ - zScore) < 0.1
+                  ? Math.exp(-0.5 * numZ * numZ) / Math.sqrt(2 * Math.PI)
                   : null;
               }),
-              borderColor: "rgb(54, 162, 235)",
-              backgroundColor: "rgb(54, 162, 235)",
+              borderColor: "rgb(153, 102, 255)",
+              backgroundColor: "rgb(153, 102, 255)",
               borderWidth: 2,
               pointRadius: 5,
               pointHoverRadius: 7,
               showLine: false,
             });
-          } else {
-            // For confidence intervals
-            config.data.datasets.push({
-              label: "Confidence Interval",
-              data: Array.from({ length: 61 }, (_, i) => {
-                const z = (i - 30) / 5;
-                return Math.abs(z) <= criticalValue
-                  ? Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI)
-                  : null;
-              }),
-              borderColor: "rgb(153, 102, 255)",
-              backgroundColor: "rgba(153, 102, 255, 0.5)",
-              borderWidth: 1,
-              fill: true,
-              pointRadius: 0,
-            });
+            resultsChart.update();
           }
-
-          // Create the chart
-          resultsChart = new Chart(ctx, config);
         }
 
         // Display hypothesis test results
@@ -1282,43 +1260,47 @@
           const tailDescription = getTailDescription(tail);
 
           resultContent.innerHTML = `
-            <div class="result-item">
-                <strong>Test Performed:</strong> ${testName}
-            </div>
-            <div class="result-item">
-                <strong>Z-Score:</strong> ${zScore.toFixed(4)}
-            </div>
-            <div class="result-item">
-                <strong>p-value:</strong> ${pValue.toExponential(4)}
-            </div>
-            <div class="result-item">
-                <strong>Significance Level (α):</strong> ${alpha}
-            </div>
-            <div class="result-item">
-                <strong>Critical Value:</strong> ${comparison}
-            </div>
-            <div class="result-item ${
-              isSignificant ? "significant" : "not-significant"
-            }">
-                <strong>Conclusion:</strong> ${
-                  isSignificant
-                    ? "Reject the null hypothesis (H₀). The result is statistically significant."
-                    : "Fail to reject the null hypothesis (H₀). The result is not statistically significant."
-                }
-            </div>
-            <div class="critical-value">
-                <strong>Interpretation:</strong> 
-                <p>A ${tailDescription} test was performed at α = ${alpha} level of significance.</p>
-                <p>The calculated p-value (${pValue.toExponential(4)}) is ${
+                    <div class="result-item">
+                        <strong>Test Performed:</strong> ${testName}
+                    </div>
+                    <div class="result-item">
+                        <strong>Z-Score:</strong> ${zScore.toFixed(4)}
+                    </div>
+                    <div class="result-item">
+                        <strong>p-value:</strong> ${pValue.toExponential(4)}
+                    </div>
+                    <div class="result-item">
+                        <strong>Significance Level (α):</strong> ${alpha}
+                    </div>
+                    <div class="result-item">
+                        <strong>Critical Value:</strong> ${comparison}
+                    </div>
+                    <div class="result-item ${
+                      isSignificant ? "significant" : "not-significant"
+                    }">
+                        <strong>Conclusion:</strong> ${
+                          isSignificant
+                            ? "Reject the null hypothesis (H₀). The result is statistically significant."
+                            : "Fail to reject the null hypothesis (H₀). The result is not statistically significant."
+                        }
+                    </div>
+                    <div class="critical-value">
+                        <strong>Interpretation:</strong> 
+                        <p>A ${tailDescription} test was performed at α = ${alpha} level of significance.</p>
+                        <p>The calculated p-value (${pValue.toExponential(
+                          4
+                        )}) is ${
             pValue < alpha ? "less" : "greater"
           } than α.</p>
-                <p>Z-score of ${zScore.toFixed(4)} ${
+                        <p>Z-score of ${zScore.toFixed(4)} ${
             isSignificant
               ? "falls in the critical region"
               : "does not fall in the critical region"
           }.</p>
-            </div>
-        `;
+                    </div>
+                `;
+
+          createChart(testType, zScore, criticalValue, tail, alpha);
         }
 
         // Display confidence interval results
@@ -1326,32 +1308,42 @@
           const testName = getTestName(testType);
 
           resultContent.innerHTML = `
-            <div class="result-item">
-                <strong>Analysis Performed:</strong> ${testName}
-            </div>
-            <div class="result-item">
-                <strong>Confidence Level:</strong> ${confidence}%
-            </div>
-            <div class="result-item">
-                <strong>Critical Z-Value:</strong> ±${result.zCritical.toFixed(
-                  4
-                )}
-            </div>
-            <div class="result-item">
-                <strong>Margin of Error:</strong> ${result.marginOfError.toFixed(
-                  4
-                )}
-            </div>
-            <div class="result-item significant">
-                <strong>Confidence Interval:</strong> 
-                (${result.lower.toFixed(4)}, ${result.upper.toFixed(4)})
-            </div>
-            <div class="critical-value">
-                <strong>Interpretation:</strong> 
-                <p>We are ${confidence}% confident that the true population parameter falls between 
-                ${result.lower.toFixed(4)} and ${result.upper.toFixed(4)}.</p>
-            </div>
-        `;
+                    <div class="result-item">
+                        <strong>Analysis Performed:</strong> ${testName}
+                    </div>
+                    <div class="result-item">
+                        <strong>Confidence Level:</strong> ${confidence}%
+                    </div>
+                    <div class="result-item">
+                        <strong>Critical Z-Value:</strong> ±${result.zCritical.toFixed(
+                          4
+                        )}
+                    </div>
+                    <div class="result-item">
+                        <strong>Margin of Error:</strong> ${result.marginOfError.toFixed(
+                          4
+                        )}
+                    </div>
+                    <div class="result-item significant">
+                        <strong>Confidence Interval:</strong> 
+                        (${result.lower.toFixed(4)}, ${result.upper.toFixed(4)})
+                    </div>
+                    <div class="critical-value">
+                        <strong>Interpretation:</strong> 
+                        <p>We are ${confidence}% confident that the true population parameter falls between 
+                        ${result.lower.toFixed(4)} and ${result.upper.toFixed(
+            4
+          )}.</p>
+                    </div>
+                `;
+
+          createChart(
+            testType,
+            null,
+            result.zCritical,
+            TAIL_TYPES.TWO_TAILED,
+            (100 - confidence) / 100
+          );
         }
 
         // Helper function to get test name
@@ -1413,13 +1405,6 @@
             resultsChart = null;
           }
           document.getElementById("graphContainer").classList.add("hidden");
-          createChart(
-            testType,
-            null,
-            result.zCritical,
-            TAIL_TYPES.TWO_TAILED,
-            (100 - confidence) / 100
-          );
           resultsDiv.classList.add("hidden");
           inputForm.classList.add("hidden");
           testTypeSelect.value = "";
