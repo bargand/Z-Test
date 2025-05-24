@@ -247,7 +247,7 @@
         const CRITICAL_VALUES = {
           0.01: 2.5758,
           0.05: 1.96,
-          0.10: 1.6449
+          0.1: 1.6449,
         };
 
         // Initialize the application
@@ -823,7 +823,7 @@
 
           return {
             zScore: (sampleProp1 - sampleProp2) / stdError,
-            pooledProp: pooledProp
+            pooledProp: pooledProp,
           };
         }
 
@@ -1210,7 +1210,7 @@
           if (pValue < 0.0001) {
             formattedPValue = pValue.toExponential(4);
           } else {
-            formattedPValue = pValue.toFixed(6).replace(/\.?0+$/, '');
+            formattedPValue = pValue.toFixed(6).replace(/\.?0+$/, "");
           }
 
           let resultHTML = `
@@ -1222,7 +1222,10 @@
             </div>`;
 
           // Show pooled proportion for two-proportion test
-          if (testType === TEST_TYPES.PROPORTION_TWO && pooledProp !== undefined) {
+          if (
+            testType === TEST_TYPES.PROPORTION_TWO &&
+            pooledProp !== undefined
+          ) {
             resultHTML += `
               <div class="result-item">
                 <strong>Pooled Proportion:</strong> ${pooledProp.toFixed(4)}
@@ -1237,12 +1240,18 @@
               <strong>Significance Level (α):</strong> ${alpha}
             </div>
             <div class="result-item">
-              <strong>Critical Value${tail === TAIL_TYPES.TWO_TAILED ? 's' : ''}:</strong> 
-              ${tail === TAIL_TYPES.TWO_TAILED ? 
-                `±${criticalValue.toFixed(4)}` : 
-                criticalValue.toFixed(4)}
+              <strong>Critical Value${
+                tail === TAIL_TYPES.TWO_TAILED ? "s" : ""
+              }:</strong> 
+              ${
+                tail === TAIL_TYPES.TWO_TAILED
+                  ? `±${criticalValue.toFixed(4)}`
+                  : criticalValue.toFixed(4)
+              }
             </div>
-            <div class="result-item ${isSignificant ? "significant" : "not-significant"}">
+            <div class="result-item ${
+              isSignificant ? "significant" : "not-significant"
+            }">
               <strong>Conclusion:</strong> ${
                 isSignificant
                   ? "Reject the null hypothesis (H₀). The result is statistically significant."
@@ -1253,13 +1262,13 @@
               <strong>Interpretation:</strong> 
               <p>A ${tailDescription} test was performed at α = ${alpha} level of significance.</p>
               <p>The calculated p-value (${formattedPValue}) is ${
-                pValue < alpha ? "less" : "greater"
-              } than α.</p>
+            pValue < alpha ? "less" : "greater"
+          } than α.</p>
               <p>Z-score of ${zScore.toFixed(4)} ${
-                isSignificant
-                  ? "falls in the critical region"
-                  : "does not fall in the critical region"
-              }.</p>
+            isSignificant
+              ? "falls in the critical region"
+              : "does not fall in the critical region"
+          }.</p>
             </div>`;
 
           resultContent.innerHTML = resultHTML;
@@ -1282,7 +1291,9 @@
               <strong>Critical Z-Value:</strong> ±${result.zCritical.toFixed(4)}
             </div>
             <div class="result-item">
-              <strong>Margin of Error:</strong> ${result.marginOfError.toFixed(4)}
+              <strong>Margin of Error:</strong> ${result.marginOfError.toFixed(
+                4
+              )}
             </div>
             <div class="result-item significant">
               <strong>Confidence Interval:</strong> 
