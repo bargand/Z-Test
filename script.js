@@ -858,4 +858,4 @@ document.addEventListener('DOMContentLoaded', function() {
     init();
 });
 
-console.log(1)
+console.log(2)
